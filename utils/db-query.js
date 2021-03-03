@@ -4,12 +4,56 @@ const connectPool = require('../config/db');
 module.exports = class Database {
   constructor() {
     this.pool = connectPool;
+    this.createTable(questionTable);
+    this.createTable(optionsTable);
+    this.createTable(answerTable);
+  }
 
-    this.pool.getConnection((err, con) => {
-      if (err) throw err;
-      else {
-        console.log(`Database ${process.env.DB_NAME} connected!`);
-      }
+  queryDatabase(query) {
+    return new Promise((resolve, reject) => {
+      this.pool.getConnection((err, con) => {
+        try {
+          console.log('Database Connected!');
+          con.query(query, (error, results) => {
+            try {
+              resolve(results);
+              con.release();
+            } catch (error1) {
+              reject(error);
+            }
+          });
+        } catch (error2) {
+          reject(err);
+        }
+      });
     });
   }
+
+  createTable(query) {
+    return this.queryDatabase(query);
+  }
 };
+
+let questionTable = `
+CREATE TABLE IF NOT EXISTS questions(
+  qid INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  question VARCHAR(200) NOT NULL,
+  isEnabled BOOLEAN DEFAULT NULL
+);`;
+
+let optionsTable = `
+CREATE TABLE IF NOT EXISTS question_options (
+	optionID INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  qid INT(11) NOT NULL,
+  options VARCHAR(200) NOT NULL,
+  isEnabled BOOLEAN DEFAULT NULL,
+  FOREIGN KEY (qid) REFERENCES questions (qid) ON DELETE CASCADE ON UPDATE CASCADE
+);`;
+
+let answerTable = `
+CREATE TABLE IF NOT EXISTS question_answer (
+	answerID INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  qid INT(11) NOT NULL,
+  optionNumber INT(11) NOT NULL,
+  FOREIGN KEY (qid) REFERENCES questions (qid) ON DELETE CASCADE ON UPDATE CASCADE
+);`;
