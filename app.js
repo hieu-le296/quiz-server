@@ -6,11 +6,13 @@ const dotenv = require('dotenv');
 // Import modules
 const questions = require('./routes/questions');
 dotenv.config({ path: './config/config.env' });
+const Database = require('./utils/db-query');
 
 const app = express();
 
 // Using bodyparser
 app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 
 // Dev logging middleware
 if (process.env.NODE_ENV === 'development') {
@@ -19,6 +21,8 @@ if (process.env.NODE_ENV === 'development') {
 
 // Mount the router
 app.use('/api/questions', questions);
+
+const connect = new Database();
 
 const PORT = process.env.PORT || 5000;
 
