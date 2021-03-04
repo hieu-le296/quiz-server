@@ -6,7 +6,7 @@ const dotenv = require('dotenv');
 // Import modules
 const questions = require('./routes/questions');
 dotenv.config({ path: './config/config.env' });
-const Database = require('./utils/db-query');
+// const Database = require('./utils/db-query');
 
 const app = express();
 
@@ -22,7 +22,7 @@ if (process.env.NODE_ENV === 'development') {
 // Mount the router
 app.use('/api/questions', questions);
 
-const connect = new Database();
+// const connect = new Database();
 
 const PORT = process.env.PORT || 5000;
 

@@ -1,7 +1,7 @@
 const mysql = require('mysql');
 const connectPool = require('../config/db');
 
-module.exports = class Database {
+class Database {
   constructor() {
     this.pool = connectPool;
     this.createTable(questionTable);
@@ -32,7 +32,7 @@ module.exports = class Database {
   createTable(query) {
     return this.queryDatabase(query);
   }
-};
+}
 
 let questionTable = `
 CREATE TABLE IF NOT EXISTS questions(
@@ -46,7 +46,6 @@ CREATE TABLE IF NOT EXISTS question_options (
 	optionID INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
   qid INT(11) NOT NULL,
   options VARCHAR(200) NOT NULL,
-  isEnabled BOOLEAN DEFAULT NULL,
   FOREIGN KEY (qid) REFERENCES questions (qid) ON DELETE CASCADE ON UPDATE CASCADE
 );`;
 
@@ -57,3 +56,12 @@ CREATE TABLE IF NOT EXISTS question_answer (
   optionNumber INT(11) NOT NULL,
   FOREIGN KEY (qid) REFERENCES questions (qid) ON DELETE CASCADE ON UPDATE CASCADE
 );`;
+
+exports.showQuestion = () => {
+  let query = `SELECT q.qid, q.question, GROUP_CONCAT(o.options ) AS options, GROUP_CONCAT(o.optionID) AS optionIDs
+              FROM questions q, question_options o
+              WHERE q.qid = o.qid
+              GROUP BY q.qid`;
+  const db = new Database();
+  return db.queryDatabase(query);
+};
