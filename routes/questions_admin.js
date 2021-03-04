@@ -2,13 +2,13 @@ const express = require('express');
 const router = express.Router();
 
 const {
-  getQuestions,
+  getAdminQuestions,
   createQuestion,
   updateQuestion,
   deleteQuestion,
 } = require('../controllers/questions');
 
-router.route('/').get(getQuestions).post(createQuestion);
+router.route('/').get(getAdminQuestions).post(createQuestion);
 
 router.route('/:id').put(updateQuestion).delete(deleteQuestion);
 

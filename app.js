@@ -4,7 +4,9 @@ const morgan = require('morgan');
 const dotenv = require('dotenv');
 
 // Import modules
-const questions = require('./routes/questions');
+const questions_user = require('./routes/questions_user');
+const questions_admin = require('./routes/questions_admin');
+
 dotenv.config({ path: './config/config.env' });
 // const Database = require('./utils/db-query');
 
@@ -20,7 +22,8 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 // Mount the router
-app.use('/api/questions', questions);
+app.use('/api/questions', questions_user);
+app.use('/api/admin/questions', questions_admin);
 
 // const connect = new Database();
 

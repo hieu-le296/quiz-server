@@ -57,11 +57,23 @@ CREATE TABLE IF NOT EXISTS question_answer (
   FOREIGN KEY (qid) REFERENCES questions (qid) ON DELETE CASCADE ON UPDATE CASCADE
 );`;
 
-exports.showQuestion = () => {
+// Show questions to users
+exports.showQuestions = () => {
   let query = `SELECT q.qid, q.question, GROUP_CONCAT(o.options ) AS options, GROUP_CONCAT(o.optionID) AS optionIDs
               FROM questions q, question_options o
               WHERE q.qid = o.qid
               GROUP BY q.qid`;
+  const db = new Database();
+  return db.queryDatabase(query);
+};
+
+// Show questions to admin, which inclues anwers
+exports.showAdminQuestions = () => {
+  let query = `SELECT q.qid, q.question, a.answerID, a.optionNumber, GROUP_CONCAT(o.options ) AS options, GROUP_CONCAT(o.optionID) AS optionIDs 
+               FROM questions q, question_options o, question_answer a
+               WHERE q.qid = o.qid AND q.qid = a.qid 
+               GROUP BY q.qid
+              `;
   const db = new Database();
   return db.queryDatabase(query);
 };

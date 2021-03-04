@@ -3,12 +3,31 @@ dotenv.config({ path: './config/config.env' });
 const db = require('../utils/db-query');
 const { convert } = require('../utils/obj-conversion');
 
-// @desc Get all the question
+// @desc Get all the question to users
 // @route GET /api/questions
 exports.getQuestions = async (req, res, next) => {
   try {
-    const results = await db.showQuestion();
-    const data = convert(results);
+    const results = await db.showQuestions();
+    const data = convert(results, 'User');
+    res.status(200).json({
+      success: true,
+      count: data.length,
+      data: data,
+    });
+  } catch (error) {
+    console.log(error);
+    res
+      .status(201)
+      .json({ success: false, message: 'Could not fetch questions' });
+  }
+};
+
+// @desc Get all the questions with answers to admin
+// @route GET /api/admin/questions
+exports.getAdminQuestions = async (req, res, next) => {
+  try {
+    const results = await db.showAdminQuestions();
+    const data = convert(results, 'Admin');
     res.status(200).json({
       success: true,
       count: data.length,
@@ -22,7 +41,7 @@ exports.getQuestions = async (req, res, next) => {
 };
 
 // @desc Create a question
-// @route POST /api/questions
+// @route POST /api/admin/questions
 exports.createQuestion = (req, res, next) => {
   res
     .status(201)
@@ -30,7 +49,7 @@ exports.createQuestion = (req, res, next) => {
 };
 
 // @desc Update a question
-// @route PUT /api/questions/:id
+// @route PUT /api/admin/questions/:id
 exports.updateQuestion = (req, res, next) => {
   res
     .status(201)
@@ -38,7 +57,7 @@ exports.updateQuestion = (req, res, next) => {
 };
 
 // @desc Delete a question
-// @route DELETE /api/questions/:id
+// @route DELETE /api/adminquestions/:id
 exports.deleteQuestion = (req, res, next) => {
   res
     .status(201)
