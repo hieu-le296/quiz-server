@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const { performValidation } = require('../utils/validation');
 
 const {
   getAdminQuestions,
@@ -8,7 +9,10 @@ const {
   deleteQuestion,
 } = require('../controllers/questions');
 
-router.route('/').get(getAdminQuestions).post(createQuestion);
+router
+  .route('/')
+  .get(getAdminQuestions)
+  .post(performValidation, createQuestion);
 
 router.route('/:id').put(updateQuestion).delete(deleteQuestion);
 
