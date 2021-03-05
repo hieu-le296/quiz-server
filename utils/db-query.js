@@ -81,18 +81,47 @@ exports.showAdminQuestions = () => {
 exports.createQuestion = async (obj) => {
   let question_query = `INSERT INTO questions(title, isEnabled) VALUES('${obj.title}', 1)`;
   const db = new Database();
-  const results = await db.queryDatabase(question_query);
-  if (results === undefined) {
+
+  try {
+    const results = await db.queryDatabase(question_query);
+    if (results === undefined) {
+      return results;
+    } else {
+      obj.options.forEach(async (element) => {
+        let options_query = `INSERT INTO question_options(qid, options) VALUES(${results.insertId}, '${element}')`;
+        await db.queryDatabase(options_query);
+      });
+      let answer_query = `INSERT INTO question_answer(qid, optionNumber) VALUES(${results.insertId}, '${obj.optionNumber}')`;
+      await db.queryDatabase(answer_query);
+    }
     return results;
-  } else {
-    console.log(results.insertId);
-    console.log(obj.optionNumber);
-    obj.options.forEach(async (element) => {
-      let options_query = `INSERT INTO question_options(qid, options) VALUES(${results.insertId}, '${element}')`;
-      await db.queryDatabase(options_query);
-    });
-    let answer_query = `INSERT INTO question_answer(qid, optionNumber) VALUES(${results.insertId}, '${obj.optionNumber}')`;
-    await db.queryDatabase(answer_query);
+  } catch (error) {
+    return { success: false, message: 'Could not create a question' };
   }
-  return results;
+};
+
+exports.updateQuestion = async (id, obj) => {
+  const db = new Database();
+  let update_title_query = `UPDATE questions SET title = '${obj.title}' WHERE qid = ${id}`;
+  try {
+    await db.queryDatabase(update_title_query);
+    let update_answer_query = `UPDATE question_answer SET optionNumber = ${obj.optionNumber} WHERE qid =${id}`;
+    await db.queryDatabase(update_answer_query);
+
+    // Compare the length of 2 arrays
+    if (obj.optionIDs.length === obj.options.length) {
+      for (let i = 0; i < obj.optionIDs.length; i++) {
+        let update_option_query = `UPDATE question_options SET options = '${obj.options[i]}' WHERE optionID = ${obj.optionIDs[i]} AND qid = ${id}`;
+        await db.queryDatabase(update_option_query);
+      }
+    }
+  } catch (error) {
+    return { success: false, message: 'Could not delete the question' };
+  }
+};
+
+exports.deleteQuestion = (id) => {
+  let delete_query = `DELETE FROM questions WHERE qid = ${id}`;
+  const db = new Database();
+  return db.queryDatabase(delete_query);
 };
