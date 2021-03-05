@@ -77,3 +77,20 @@ exports.showAdminQuestions = () => {
   const db = new Database();
   return db.queryDatabase(query);
 };
+
+exports.createQuestion = async (obj) => {
+  let question_query = `INSERT INTO questions(title, isEnabled) VALUES('${obj.title}', 1)`;
+  const db = new Database();
+  const results = await db.queryDatabase(question_query);
+  if (results === undefined) {
+    return results;
+  } else {
+    console.log(results.insertId);
+    console.log(obj.options);
+    obj.options.forEach((element) => {
+      let options_query = `INSERT INTO question_options(qid, options) VALUES(${results.insertId}, '${element}')`;
+      db.queryDatabase(options_query);
+    });
+  }
+  return results;
+};

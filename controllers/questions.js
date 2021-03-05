@@ -44,12 +44,17 @@ exports.getAdminQuestions = async (req, res, next) => {
 // @route POST /api/admin/questions
 exports.createQuestion = async (req, res, next) => {
   try {
-    // Todo
-    res.status(201).json({
-      success: true,
-      message: 'question successfully created',
-      data: results,
-    });
+    const results = await db.createQuestion(req.body);
+    if (results === undefined) {
+      res
+        .status(400)
+        .json({ success: false, message: 'Could not create a question' });
+    } else {
+      res.status(201).json({
+        success: true,
+        message: 'question successfully created',
+      });
+    }
   } catch (error) {
     res
       .status(400)
