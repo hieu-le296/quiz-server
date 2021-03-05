@@ -17,7 +17,7 @@ exports.getQuestions = async (req, res, next) => {
   } catch (error) {
     console.log(error);
     res
-      .status(201)
+      .status(404)
       .json({ success: false, message: 'Could not fetch questions' });
   }
 };
@@ -35,17 +35,26 @@ exports.getAdminQuestions = async (req, res, next) => {
     });
   } catch (error) {
     res
-      .status(201)
+      .status(404)
       .json({ success: false, message: 'Could not fetch questions' });
   }
 };
 
 // @desc Create a question
 // @route POST /api/admin/questions
-exports.createQuestion = (req, res, next) => {
-  res
-    .status(201)
-    .json({ success: true, message: 'question successfully created' });
+exports.createQuestion = async (req, res, next) => {
+  try {
+    // Todo
+    res.status(201).json({
+      success: true,
+      message: 'question successfully created',
+      data: results,
+    });
+  } catch (error) {
+    res
+      .status(400)
+      .json({ success: false, message: 'Could not create a question' });
+  }
 };
 
 // @desc Update a question
@@ -57,7 +66,7 @@ exports.updateQuestion = (req, res, next) => {
 };
 
 // @desc Delete a question
-// @route DELETE /api/adminquestions/:id
+// @route DELETE /api/admin/questions/:id
 exports.deleteQuestion = (req, res, next) => {
   res
     .status(201)

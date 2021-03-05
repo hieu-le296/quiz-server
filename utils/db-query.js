@@ -37,7 +37,7 @@ class Database {
 let questionTable = `
 CREATE TABLE IF NOT EXISTS questions(
   qid INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  question VARCHAR(200) NOT NULL,
+  title VARCHAR(200) NOT NULL UNIQUE,
   isEnabled BOOLEAN DEFAULT NULL
 );`;
 
@@ -59,7 +59,7 @@ CREATE TABLE IF NOT EXISTS question_answer (
 
 // Show questions to users
 exports.showQuestions = () => {
-  let query = `SELECT q.qid, q.question, GROUP_CONCAT(o.options ) AS options, GROUP_CONCAT(o.optionID) AS optionIDs
+  let query = `SELECT q.qid, q.title, GROUP_CONCAT(o.options ) AS options, GROUP_CONCAT(o.optionID) AS optionIDs
               FROM questions q, question_options o
               WHERE q.qid = o.qid
               GROUP BY q.qid`;
@@ -69,7 +69,7 @@ exports.showQuestions = () => {
 
 // Show questions to admin, which inclues anwers
 exports.showAdminQuestions = () => {
-  let query = `SELECT q.qid, q.question, a.answerID, a.optionNumber, GROUP_CONCAT(o.options ) AS options, GROUP_CONCAT(o.optionID) AS optionIDs 
+  let query = `SELECT q.qid, q.title, a.answerID, a.optionNumber, GROUP_CONCAT(o.options ) AS options, GROUP_CONCAT(o.optionID) AS optionIDs 
                FROM questions q, question_options o, question_answer a
                WHERE q.qid = o.qid AND q.qid = a.qid 
                GROUP BY q.qid

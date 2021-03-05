@@ -12,7 +12,7 @@ exports.convert = (queryResult, type) => {
       const options = element.options.split(',');
       const question = new Question(
         element.qid,
-        element.question,
+        element.title,
         optionIDs,
         options
       );
@@ -24,7 +24,7 @@ exports.convert = (queryResult, type) => {
       const options = element.options.split(',');
       const question = new QuestionAdmin(
         element.qid,
-        element.question,
+        element.title,
         optionIDs,
         options,
         element.answerID,
