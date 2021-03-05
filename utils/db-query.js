@@ -86,11 +86,13 @@ exports.createQuestion = async (obj) => {
     return results;
   } else {
     console.log(results.insertId);
-    console.log(obj.options);
-    obj.options.forEach((element) => {
+    console.log(obj.optionNumber);
+    obj.options.forEach(async (element) => {
       let options_query = `INSERT INTO question_options(qid, options) VALUES(${results.insertId}, '${element}')`;
-      db.queryDatabase(options_query);
+      await db.queryDatabase(options_query);
     });
+    let answer_query = `INSERT INTO question_answer(qid, optionNumber) VALUES(${results.insertId}, '${obj.optionNumber}')`;
+    await db.queryDatabase(answer_query);
   }
   return results;
 };

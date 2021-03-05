@@ -16,7 +16,7 @@ exports.performValidation = async (req, res, next) => {
   const hasError = !error.isEmpty();
 
   if (hasError) {
-    res.status(422).json({ error: error.array() });
+    res.status(404).json({ success: false, message: error.array() });
   } else {
     next();
   }
