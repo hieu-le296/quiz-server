@@ -12,7 +12,7 @@ exports.getQuestions = async (req, res, next) => {
     res.status(200).json({
       success: true,
       count: data.length,
-      data: data,
+      questions: data,
     });
   } catch (error) {
     console.log(error);
@@ -31,7 +31,7 @@ exports.getAdminQuestions = async (req, res, next) => {
     res.status(200).json({
       success: true,
       count: data.length,
-      data: data,
+      questions: data,
     });
   } catch (error) {
     res

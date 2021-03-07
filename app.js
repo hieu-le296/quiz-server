@@ -2,6 +2,7 @@
 const express = require('express');
 const morgan = require('morgan');
 const dotenv = require('dotenv');
+const cors = require('cors');
 
 // Import modules
 const questions_user = require('./routes/questions_user');
@@ -16,7 +17,10 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+// Use cors
+app.use(cors());
 // Dev logging middleware
+
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
