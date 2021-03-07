@@ -1,15 +1,15 @@
 class Question {
-  constructor(questionID, title, optionIDs, options) {
-    this.questionID = questionID;
+  constructor(title, options) {
     this.title = title;
-    this.optionIDs = optionIDs;
     this.options = options;
   }
 }
 
 class QuestionAdmin extends Question {
-  constructor(questionID, title, optionIDs, options, answerID, optionNumber) {
-    super(questionID, title, optionIDs, options);
+  constructor(title, options, questionID, optionIDs, answerID, optionNumber) {
+    super(title, options);
+    this.questionID = questionID;
+    this.optionIDs = optionIDs;
     this.answerID = answerID;
     this.optionNumber = optionNumber;
   }

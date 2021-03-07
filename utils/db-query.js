@@ -59,10 +59,10 @@ CREATE TABLE IF NOT EXISTS question_answer (
 
 // Show questions to users
 exports.showQuestions = () => {
-  let query = `SELECT q.qid, q.title, GROUP_CONCAT(o.options ) AS options, GROUP_CONCAT(o.optionID) AS optionIDs
+  let query = `SELECT q.title, GROUP_CONCAT(o.options ) AS options
               FROM questions q, question_options o
               WHERE q.qid = o.qid
-              GROUP BY q.qid`;
+              GROUP BY q.title`;
   const db = new Database();
   return db.queryDatabase(query);
 };
