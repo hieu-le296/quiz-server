@@ -62,7 +62,14 @@ exports.showQuestions = () => {
   let query = `SELECT q.title, GROUP_CONCAT(o.options ) AS options
               FROM questions q, question_options o
               WHERE q.qid = o.qid
-              GROUP BY q.title`;
+              GROUP BY q.title;`;
+  const db = new Database();
+  return db.queryDatabase(query);
+};
+
+// Get the answers to match the user answer
+exports.getAnswers = () => {
+  let query = `SELECT GROUP_CONCAT(optionNumber) AS answers FROM question_answer;`;
   const db = new Database();
   return db.queryDatabase(query);
 };
@@ -72,14 +79,14 @@ exports.showAdminQuestions = () => {
   let query = `SELECT q.qid, q.title, a.answerID, a.optionNumber, GROUP_CONCAT(o.options ) AS options, GROUP_CONCAT(o.optionID) AS optionIDs 
                FROM questions q, question_options o, question_answer a
                WHERE q.qid = o.qid AND q.qid = a.qid 
-               GROUP BY q.qid
+               GROUP BY q.qid;
               `;
   const db = new Database();
   return db.queryDatabase(query);
 };
 
 exports.createQuestion = async (obj) => {
-  let question_query = `INSERT INTO questions(title, isEnabled) VALUES('${obj.title}', 1)`;
+  let question_query = `INSERT INTO questions(title, isEnabled) VALUES('${obj.title}', 1);`;
   const db = new Database();
 
   try {
@@ -88,10 +95,10 @@ exports.createQuestion = async (obj) => {
       return results;
     } else {
       obj.options.forEach(async (element) => {
-        let options_query = `INSERT INTO question_options(qid, options) VALUES(${results.insertId}, '${element}')`;
+        let options_query = `INSERT INTO question_options(qid, options) VALUES(${results.insertId}, '${element}');`;
         await db.queryDatabase(options_query);
       });
-      let answer_query = `INSERT INTO question_answer(qid, optionNumber) VALUES(${results.insertId}, '${obj.optionNumber}')`;
+      let answer_query = `INSERT INTO question_answer(qid, optionNumber) VALUES(${results.insertId}, '${obj.optionNumber}');`;
       await db.queryDatabase(answer_query);
     }
     return results;
@@ -102,10 +109,10 @@ exports.createQuestion = async (obj) => {
 
 exports.updateQuestion = async (id, obj) => {
   const db = new Database();
-  let update_title_query = `UPDATE questions SET title = '${obj.title}' WHERE qid = ${id}`;
+  let update_title_query = `UPDATE questions SET title = '${obj.title}' WHERE qid = ${id};`;
   try {
     await db.queryDatabase(update_title_query);
-    let update_answer_query = `UPDATE question_answer SET optionNumber = ${obj.optionNumber} WHERE qid =${id}`;
+    let update_answer_query = `UPDATE question_answer SET optionNumber = ${obj.optionNumber} WHERE qid =${id};`;
     await db.queryDatabase(update_answer_query);
     handleOptions(id, obj);
   } catch (error) {
@@ -114,7 +121,7 @@ exports.updateQuestion = async (id, obj) => {
 };
 
 exports.deleteQuestion = (id) => {
-  let delete_query = `DELETE FROM questions WHERE qid = ${id}`;
+  let delete_query = `DELETE FROM questions WHERE qid = ${id};`;
   const db = new Database();
   return db.queryDatabase(delete_query);
 };
@@ -125,7 +132,7 @@ async function handleOptions(qid, obj) {
 
   if (obj.optionIDs.length == obj.options.length) {
     for (let i = 0; i < obj.optionIDs.length; i++) {
-      let update_option_query = `UPDATE question_options SET options = '${obj.options[i]}' WHERE optionID = ${obj.optionIDs[i]} AND qid = ${qid}`;
+      let update_option_query = `UPDATE question_options SET options = '${obj.options[i]}' WHERE optionID = ${obj.optionIDs[i]} AND qid = ${qid};`;
       await db.queryDatabase(update_option_query);
     }
   }
@@ -133,7 +140,7 @@ async function handleOptions(qid, obj) {
   // Insert new options into database
   else if (obj.optionIDs.length < obj.options.length) {
     for (let i = 0; i < obj.optionIDs.length; i++) {
-      let update_option_query = `UPDATE question_options SET options = '${obj.options[i]}' WHERE optionID = ${obj.optionIDs[i]} AND qid = ${qid}`;
+      let update_option_query = `UPDATE question_options SET options = '${obj.options[i]}' WHERE optionID = ${obj.optionIDs[i]} AND qid = ${qid};`;
       await db.queryDatabase(update_option_query);
     }
     const newOptionsArr = obj.options.slice(
@@ -141,14 +148,14 @@ async function handleOptions(qid, obj) {
       obj.options.length
     );
     newOptionsArr.forEach(async (element) => {
-      let options_query = `INSERT INTO question_options(qid, options) VALUES(${qid}, '${element}')`;
+      let options_query = `INSERT INTO question_options(qid, options) VALUES(${qid}, '${element}');`;
       await db.queryDatabase(options_query);
     });
   }
   // Delete the options in the database
   else if (obj.optionIDs.length > obj.options.length) {
     for (let i = 0; i < obj.options.length; i++) {
-      let update_option_query = `UPDATE question_options SET options = '${obj.options[i]}' WHERE optionID = ${obj.optionIDs[i]} AND qid = ${qid}`;
+      let update_option_query = `UPDATE question_options SET options = '${obj.options[i]}' WHERE optionID = ${obj.optionIDs[i]} AND qid = ${qid};`;
       await db.queryDatabase(update_option_query);
     }
     const newOptionIDsArr = obj.optionIDs.slice(
@@ -157,7 +164,7 @@ async function handleOptions(qid, obj) {
     );
 
     newOptionIDsArr.forEach(async (optID) => {
-      let options_query = `DELETE FROM question_options WHERE optionID = ${optID}`;
+      let options_query = `DELETE FROM question_options WHERE optionID = ${optID};`;
       await db.queryDatabase(options_query);
     });
   }
