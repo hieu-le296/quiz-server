@@ -14,13 +14,17 @@ dotenv.config({ path: './config/config.env' });
 const app = express();
 
 // Using bodyparser
-app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(
+  express.json({
+    type: ['application/json', 'text/plain'],
+  })
+);
 
 // Use cors
 app.use(cors());
-// Dev logging middleware
 
+// Dev logging middleware
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }

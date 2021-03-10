@@ -32,13 +32,13 @@ exports.getAnswers = async (req, res, next) => {
 
     const score = checkScore(studentAnswers, answersObj[0].answers);
 
-    console.log(score);
-
     res.status(200).json({
       success: true,
-      message: `Your score is ${score}/${correctAnswer.length}`,
+      correctAnswer: answersObj[0].answers,
+      message: `Your score is ${score} / ${studentAnswers.length}`,
     });
   } catch (error) {
+    console.log(error);
     res
       .status(400)
       .json({ success: false, message: 'Could not upload answers' });
@@ -66,6 +66,7 @@ exports.getAdminQuestions = async (req, res, next) => {
 // @desc Create a question
 // @route POST /api/admin/questions
 exports.createQuestion = async (req, res, next) => {
+  console.log(req.body);
   try {
     const results = await db.createQuestion(req.body);
     if (results === undefined) {

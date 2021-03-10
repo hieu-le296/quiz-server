@@ -13,7 +13,6 @@ class Database {
     return new Promise((resolve, reject) => {
       this.pool.getConnection((err, con) => {
         try {
-          console.log('Database Connected!');
           con.query(query, (error, results) => {
             try {
               resolve(results);
@@ -62,7 +61,7 @@ exports.showQuestions = () => {
   let query = `SELECT q.title, GROUP_CONCAT(o.options ) AS options
               FROM questions q, question_options o
               WHERE q.qid = o.qid
-              GROUP BY q.title;`;
+              GROUP BY q.qid;`;
   const db = new Database();
   return db.queryDatabase(query);
 };
