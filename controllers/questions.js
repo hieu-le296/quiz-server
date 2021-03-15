@@ -63,20 +63,40 @@ exports.getAdminQuestions = async (req, res, next) => {
   }
 };
 
+// @desc Get one question and its detail for editing
+// @route GET /api/admin/questions
+exports.getAdminOneQuestion = async (req, res, next) => {
+  try {
+    const results = await db.showAdminOneQuestion(req.params.id);
+    const data = convert(results, 'Admin');
+    res.status(200).json({
+      success: true,
+      count: data.length,
+      questions: data,
+    });
+  } catch (error) {
+    res
+      .status(404)
+      .json({ success: false, message: 'Could not fetch questions' });
+  }
+};
+
 // @desc Create a question
 // @route POST /api/admin/questions
 exports.createQuestion = async (req, res, next) => {
   console.log(req.body);
   try {
     const results = await db.createQuestion(req.body);
+    console.log(results);
     if (results === undefined) {
-      res
-        .status(400)
-        .json({ success: false, message: 'Could not create a question' });
+      res.status(400).json({
+        success: false,
+        message: 'Could not create a question or question duplicate',
+      });
     } else {
       res.status(201).json({
         success: true,
-        message: 'question successfully created',
+        message: 'Question successfully created',
       });
     }
   } catch (error) {

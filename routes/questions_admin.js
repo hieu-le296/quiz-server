@@ -4,6 +4,7 @@ const { performValidation } = require('../utils/validation');
 
 const {
   getAdminQuestions,
+  getAdminOneQuestion,
   createQuestion,
   updateQuestion,
   deleteQuestion,
@@ -14,6 +15,10 @@ router
   .get(getAdminQuestions)
   .post(performValidation, createQuestion);
 
-router.route('/:id').put(updateQuestion).delete(deleteQuestion);
+router
+  .route('/:id')
+  .get(getAdminOneQuestion)
+  .put(updateQuestion)
+  .delete(deleteQuestion);
 
 module.exports = router;

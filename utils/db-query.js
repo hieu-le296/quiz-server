@@ -78,7 +78,19 @@ exports.showAdminQuestions = () => {
   let query = `SELECT q.qid, q.title, a.answerID, a.optionNumber, GROUP_CONCAT(o.options ) AS options, GROUP_CONCAT(o.optionID) AS optionIDs 
                FROM questions q, question_options o, question_answer a
                WHERE q.qid = o.qid AND q.qid = a.qid 
-               GROUP BY q.qid;
+               GROUP BY q.qid DESC;
+              `;
+  const db = new Database();
+  return db.queryDatabase(query);
+};
+
+// Show 1 question to admin, for editing
+exports.showAdminOneQuestion = (id) => {
+  let query = `
+              SELECT q.qid, q.title, a.answerID, a.optionNumber, GROUP_CONCAT(o.options ) AS options, GROUP_CONCAT(o.optionID) AS optionIDs 
+              FROM questions q, question_options o, question_answer a
+              WHERE q.qid = o.qid AND q.qid = a.qid AND q.qid = ${id}
+              GROUP BY q.qid;
               `;
   const db = new Database();
   return db.queryDatabase(query);
