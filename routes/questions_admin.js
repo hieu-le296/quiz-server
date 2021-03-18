@@ -9,7 +9,7 @@ const {
   updateQuestion,
   deleteQuestion,
   deleteOption,
-} = require('../controllers/questions');
+} = require('../controllers/question_admin');
 
 router
   .route('/')
