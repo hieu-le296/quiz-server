@@ -137,46 +137,23 @@ exports.deleteQuestion = (id) => {
   return db.queryDatabase(delete_query);
 };
 
-// Question Options Handling for UPDATE
+exports.deleteOption = (id) => {
+  let delete_option_query = `DELETE FROM question_options WHERE optionID = ${id}`;
+  const db = new Database();
+  return db.queryDatabase(delete_option_query);
+};
+
 async function handleOptions(qid, obj) {
   const db = new Database();
 
-  if (obj.optionIDs.length == obj.options.length) {
-    for (let i = 0; i < obj.optionIDs.length; i++) {
-      let update_option_query = `UPDATE question_options SET options = '${obj.options[i]}' WHERE optionID = ${obj.optionIDs[i]} AND qid = ${qid};`;
-      await db.queryDatabase(update_option_query);
-    }
-  }
-
-  // Insert new options into database
-  else if (obj.optionIDs.length < obj.options.length) {
-    for (let i = 0; i < obj.optionIDs.length; i++) {
-      let update_option_query = `UPDATE question_options SET options = '${obj.options[i]}' WHERE optionID = ${obj.optionIDs[i]} AND qid = ${qid};`;
-      await db.queryDatabase(update_option_query);
-    }
-    const newOptionsArr = obj.options.slice(
-      obj.optionIDs.length,
-      obj.options.length
-    );
-    newOptionsArr.forEach(async (element) => {
-      let options_query = `INSERT INTO question_options(qid, options) VALUES(${qid}, '${element}');`;
+  for (let i = 0; i < obj.options.length; i++) {
+    if (obj.optionIDs[i] == '') {
+      // Insert new options into database
+      let options_query = `INSERT INTO question_options(qid, options) VALUES(${qid}, '${obj.options[i]}');`;
       await db.queryDatabase(options_query);
-    });
-  }
-  // Delete the options in the database
-  else if (obj.optionIDs.length > obj.options.length) {
-    for (let i = 0; i < obj.options.length; i++) {
+    } else {
       let update_option_query = `UPDATE question_options SET options = '${obj.options[i]}' WHERE optionID = ${obj.optionIDs[i]} AND qid = ${qid};`;
       await db.queryDatabase(update_option_query);
     }
-    const newOptionIDsArr = obj.optionIDs.slice(
-      obj.options.length,
-      obj.optionIDs.length
-    );
-
-    newOptionIDsArr.forEach(async (optID) => {
-      let options_query = `DELETE FROM question_options WHERE optionID = ${optID};`;
-      await db.queryDatabase(options_query);
-    });
   }
 }

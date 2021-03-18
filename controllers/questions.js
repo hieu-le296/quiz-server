@@ -72,7 +72,7 @@ exports.getAdminOneQuestion = async (req, res, next) => {
     res.status(200).json({
       success: true,
       count: data.length,
-      questions: data,
+      question: data,
     });
   } catch (error) {
     res
@@ -84,10 +84,8 @@ exports.getAdminOneQuestion = async (req, res, next) => {
 // @desc Create a question
 // @route POST /api/admin/questions
 exports.createQuestion = async (req, res, next) => {
-  console.log(req.body);
   try {
     const results = await db.createQuestion(req.body);
-    console.log(results);
     if (results === undefined) {
       res.status(400).json({
         success: false,
@@ -133,5 +131,20 @@ exports.deleteQuestion = async (req, res, next) => {
     res
       .status(400)
       .json({ success: false, message: 'Could not delete a question' });
+  }
+};
+
+// @desc Delete an option
+// @route DELETE /api/admin/questions/options/:id
+exports.deleteOption = async (req, res, next) => {
+  try {
+    await db.deleteOption(req.params.id);
+    res
+      .status(200)
+      .json({ success: true, message: 'option successfully deleted' });
+  } catch (error) {
+    res
+      .status(400)
+      .json({ success: false, message: 'Could not delete that option' });
   }
 };

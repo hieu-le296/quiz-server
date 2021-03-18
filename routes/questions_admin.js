@@ -8,6 +8,7 @@ const {
   createQuestion,
   updateQuestion,
   deleteQuestion,
+  deleteOption,
 } = require('../controllers/questions');
 
 router
@@ -20,5 +21,7 @@ router
   .get(getAdminOneQuestion)
   .put(updateQuestion)
   .delete(deleteQuestion);
+
+router.route('/options/:id').delete(deleteOption);
 
 module.exports = router;
