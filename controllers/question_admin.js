@@ -66,14 +66,30 @@ exports.createQuestion = async (req, res, next) => {
 // @route PUT /api/admin/questions/:id
 exports.updateQuestion = async (req, res, next) => {
   try {
-    await db.updateQuestion(req.params.id, req.body);
+    await db.updateQuestionStatus(req.params.id, req.body);
     res
       .status(200)
-      .json({ success: true, message: 'question successfully updated' });
+      .json({ success: true, message: 'Question successfully updated' });
   } catch (error) {
     res
       .status(400)
       .json({ success: false, message: 'Could not update a question' });
+  }
+};
+
+// @desc Update the question status
+// @route PUT /api/admin/questions/status/:id
+exports.updateQuestionStatus = async (req, res, next) => {
+  try {
+    await db.updateQuestionStatus(req.params.id, req.body);
+    res
+      .status(200)
+      .json({ success: true, message: 'Question status successfully updated' });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      message: 'Could not update the question status',
+    });
   }
 };
 
@@ -99,7 +115,7 @@ exports.deleteOption = async (req, res, next) => {
     await db.deleteOption(req.params.id);
     res
       .status(200)
-      .json({ success: true, message: 'option successfully deleted' });
+      .json({ success: true, message: 'Option successfully deleted' });
   } catch (error) {
     res
       .status(400)

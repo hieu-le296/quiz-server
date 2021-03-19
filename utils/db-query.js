@@ -37,7 +37,7 @@ let questionTable = `
 CREATE TABLE IF NOT EXISTS questions(
   qid INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
   title VARCHAR(200) NOT NULL UNIQUE,
-  isEnabled BOOLEAN DEFAULT NULL
+  isEnabled BOOLEAN DEFAULT true
 );`;
 
 let optionsTable = `
@@ -58,24 +58,28 @@ CREATE TABLE IF NOT EXISTS question_answer (
 
 // Show questions to users
 exports.showQuestions = () => {
-  let query = `SELECT q.title, GROUP_CONCAT(o.options ) AS options
+  let query = `SELECT q.title, q.isEnabled, GROUP_CONCAT(o.options ) AS options
               FROM questions q, question_options o
-              WHERE q.qid = o.qid
-              GROUP BY q.qid;`;
+              WHERE q.qid = o.qid AND q.isEnabled = True
+              GROUP BY q.qid
+              ORDER BY q.qid ASC`;
   const db = new Database();
   return db.queryDatabase(query);
 };
 
 // Get the answers to match the user answer
 exports.getAnswers = () => {
-  let query = `SELECT GROUP_CONCAT(optionNumber) AS answers FROM question_answer;`;
+  let query = `SELECT GROUP_CONCAT(qa.optionNumber) AS answers 
+              FROM questions q, question_answer qa
+              WHERE q.qid = qa.qid AND q.isEnabled = TRUE
+              ORDER BY q.qid ASC;`;
   const db = new Database();
   return db.queryDatabase(query);
 };
 
 // Show questions to admin, which inclues anwers
 exports.showAdminQuestions = () => {
-  let query = `SELECT q.qid, q.title, a.answerID, a.optionNumber, GROUP_CONCAT(o.options ) AS options, GROUP_CONCAT(o.optionID) AS optionIDs 
+  let query = `SELECT q.qid, q.title, q.isEnabled, a.answerID, a.optionNumber, GROUP_CONCAT(o.options ) AS options, GROUP_CONCAT(o.optionID) AS optionIDs 
                FROM questions q, question_options o, question_answer a
                WHERE q.qid = o.qid AND q.qid = a.qid 
                GROUP BY q.qid DESC;
@@ -118,9 +122,19 @@ exports.createQuestion = async (obj) => {
   }
 };
 
-exports.updateQuestion = async (id, obj) => {
+exports.updateQuestionStatus = async (id, obj) => {
+  let status_query = `Update questions SET isEnabled = ${obj.isEnabled} WHERE qid = ${id}`;
   const db = new Database();
+  try {
+    await db.queryDatabase(status_query);
+  } catch (error) {
+    await db.queryDatabase(status_query);
+  }
+};
+
+exports.updateQuestion = async (id, obj) => {
   let update_title_query = `UPDATE questions SET title = '${obj.title}' WHERE qid = ${id};`;
+  const db = new Database();
   try {
     await db.queryDatabase(update_title_query);
     let update_answer_query = `UPDATE question_answer SET optionNumber = ${obj.optionNumber} WHERE qid =${id};`;

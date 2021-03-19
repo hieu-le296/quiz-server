@@ -6,7 +6,7 @@ exports.convert = (queryResult, type) => {
   if (type === 'User') {
     queryResult.forEach((element) => {
       const options = element.options.split(',');
-      const question = new Question(element.title, options);
+      const question = new Question(element.title, element.isEnabled, options);
       questionArr.push(question);
     });
   } else if (type === 'Admin') {
@@ -17,6 +17,7 @@ exports.convert = (queryResult, type) => {
         element.title,
         options,
         element.qid,
+        element.isEnabled,
         optionIDs,
         element.answerID,
         element.optionNumber

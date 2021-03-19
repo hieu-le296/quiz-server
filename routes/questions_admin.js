@@ -7,6 +7,7 @@ const {
   getAdminOneQuestion,
   createQuestion,
   updateQuestion,
+  updateQuestionStatus,
   deleteQuestion,
   deleteOption,
 } = require('../controllers/question_admin');
@@ -19,8 +20,10 @@ router
 router
   .route('/:id')
   .get(getAdminOneQuestion)
-  .put(updateQuestion)
+  .put(performValidation, updateQuestion)
   .delete(deleteQuestion);
+
+router.route('/status/:id').put(updateQuestionStatus);
 
 router.route('/options/:id').delete(deleteOption);
 
