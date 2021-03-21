@@ -66,7 +66,7 @@ exports.createQuestion = async (req, res, next) => {
 // @route PUT /api/admin/questions/:id
 exports.updateQuestion = async (req, res, next) => {
   try {
-    await db.updateQuestionStatus(req.params.id, req.body);
+    await db.updateQuestion(req.params.id, req.body);
     res
       .status(200)
       .json({ success: true, message: 'Question successfully updated' });
