@@ -9,13 +9,15 @@ const {
   updateQuestion,
   updateQuestionStatus,
   deleteQuestion,
+  deleteAllQuestions,
   deleteOption,
 } = require('../controllers/question_admin');
 
 router
   .route('/')
   .get(getAdminQuestions)
-  .post(performValidation, createQuestion);
+  .post(performValidation, createQuestion)
+  .delete(deleteAllQuestions);
 
 router
   .route('/:id')

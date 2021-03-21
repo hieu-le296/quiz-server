@@ -157,6 +157,12 @@ exports.deleteQuestion = (id) => {
   return db.queryDatabase(delete_query, [id]);
 };
 
+exports.deleteAllQuestions = async () => {
+  let delete_all_query = `DELETE FROM questions`;
+  const db = new Database();
+  await db.queryDatabase(delete_all_query, []);
+};
+
 exports.deleteOption = (id) => {
   let delete_option_query = `DELETE FROM question_options WHERE optionID = ?;`;
   const db = new Database();
